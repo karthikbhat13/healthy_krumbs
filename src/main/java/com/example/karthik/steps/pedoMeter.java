@@ -14,6 +14,8 @@ import android.util.Log;
 import android.widget.Button;
 import android.widget.TextView;
 
+import java.util.Date;
+
 public class pedoMeter extends AppCompatActivity {
 
 
@@ -31,13 +33,22 @@ public class pedoMeter extends AppCompatActivity {
 
     private boolean isRunning = true;
 
-    private long lastStepTime;
+    private long lastStepTime = 0;
+
+    private long thisStepTime;
 
     private double temp;
 
     private long pace;
 
-//    private long[] lastList = {-1, -1, -1, -1};
+    private TextView p;
+
+    private long[] lastList = {-1, -1, -1, -1, -1};
+
+    private int index = 0;
+
+
+
 
 
     @Override
@@ -49,6 +60,8 @@ public class pedoMeter extends AppCompatActivity {
 
         dist = (TextView) findViewById( R.id.dist);
 
+        p = (TextView) findViewById(R.id.pace1);
+
         registerForSensorEvents();
         setupDetectorTimestampUpdaterThread();
 
@@ -57,11 +70,7 @@ public class pedoMeter extends AppCompatActivity {
     }
 
 
-    public long getPace(long tstamp,long lTime,double steps){
-        long temp1 = tstamp - lTime;
 
-
-    }
 
 
     public void registerForSensorEvents() {
@@ -99,14 +108,47 @@ public class pedoMeter extends AppCompatActivity {
 
                                       @Override
                                       public void onSensorChanged(SensorEvent event) {
-                                          // Time is in nanoseconds, convert to millis
-                                          long timestamp = event.timestamp * 1000;
 
-                                          pace = getPace(timestamp,lastStepTime,temp);
+                                          thisStepTime = (new Date()).getTime() + (event.timestamp - System.nanoTime()) / 1000000L;
+                                          long sum = 0;
+                                          if(lastStepTime > 0){
+
+                                              long dif = thisStepTime - lastStepTime;
+                                              lastList[index] = dif;
+                                              index = (index +1) % lastList.length;
+                                              Log.i("check1",String.valueOf(dif));
+
+                                              for(int i=0;i<lastList.length;i++) {
+                                                  if (lastList[i] < 0) {
+                                                      sum = -1;
+                                                      break;
+                                                  }
+                                                  sum += lastList[i];
+                                              }
+                                                  if(sum >= 0){
+                                                      long avg = sum / lastList.length;
+                                                      pace = 60 * 1000 / avg ;
+                                                      Log.i("sum",String.valueOf(sum));
+
+
+                                                  }
 
 
 
-                                      }
+                                              }
+                                            p.setText(String.valueOf(pace)+ "s/m");
+                                            Log.i("pace",String.valueOf(pace));
+
+                                              lastStepTime = thisStepTime;
+
+                                          }
+
+
+
+
+
+
+
 
                                       @Override
                                       public void onAccuracyChanged(Sensor sensor, int accuracy) {

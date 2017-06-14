@@ -48,4 +48,28 @@
         android:layout_marginEnd="21dp"
         android:text="TextView"
         android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/text3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_above="@+id/dist"
+        android:layout_alignEnd="@+id/text1"
+        android:layout_marginBottom="20dp"
+        android:layout_marginLeft="20dp"
+        android:layout_marginRight="20dp"
+        android:layout_marginTop="20dp"
+        android:paddingRight="30dp"
+        android:text="Pace :"
+        android:textSize="40sp" />
+
+    <TextView
+        android:id="@+id/pace1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignBottom="@+id/text3"
+        android:layout_alignEnd="@+id/dist"
+        android:text="TextView"
+        android:textSize="40sp"
+        android:layout_toEndOf="@+id/text3" />
 </RelativeLayout>
